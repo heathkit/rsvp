@@ -1,0 +1,71 @@
+{
+    "version": "0.1.0",
+    "command": "gulp",
+    "isShellCommand": true,
+    "args": [
+        "--no-color"
+    ],
+    "tasks": [
+        {
+            "taskName": "ts",
+            "isBuildCommand": true,
+            "showOutput": "silent",
+            "problemMatcher": "$tsc"
+        },
+        {
+            "taskName": "lint",
+            "showOutput": "silent",
+            "problemMatcher": [
+                {
+                    "owner": "gulp",
+                    "fileLocation": ["absolute"],
+                    "pattern": {
+                        "regexp": "^\\[gulp\\] \\[gulp-tslint\\] (.*) \\(.*\\) (.*)\\[(\\d*), (\\d*)\\]: (.*)$",
+                        "file": 2,
+                        "line": 3,
+                        "column": 4,
+                        "message": 5,
+                        "severity": 1
+                    }
+                }
+            ]
+        },
+        {
+            "taskName": "emulate-ios",
+            "showOutput": "never"
+        },
+        {
+            "taskName": "remote-emulate-ios",
+            "showOutput": "never"
+        },
+        {
+            "taskName": "emulate-android",
+            "showOutput": "never"
+        },
+        {
+            "taskName": "test",
+            "isTestCommand": true,
+            "showOutput": "silent",
+            "problemMatcher": [
+                {
+                    "owner": "gulp",
+                    "fileLocation": ["absolute"],
+                    "pattern": [
+                        {
+                            "regexp": ".*? (FAILED)$"
+                        },
+                        {
+                            "regexp": "\t(.*)$",
+                            "message": 1
+                        },
+                        {
+                            "regexp": "at (.*):(\\d*)$",
+                            "file": 1,
+                            "line": 2
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
