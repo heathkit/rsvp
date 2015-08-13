@@ -1,11 +1,4 @@
-
-module JustinCredible.SampleApp.Application {
-
-    //#region Variables
-
-    /**
-     * The root Angular application module.
-     */
+module hkit.RSVP.App {
     var ngModule: ng.IModule;
 
     /**
@@ -25,16 +18,6 @@ module JustinCredible.SampleApp.Application {
     };
 
     /**
-     * Indicates if the PIN entry dialog is currently being shown. This is used to determine
-     * if the device_pause event should update the lastPausedAt timestamp (we don't want to
-     * update the timestamp if the dialog is open because it will allow the user to pause
-     * and then kill the app and bypass the PIN entry screen on next resume).
-     */
-    var isShowingPinPrompt: boolean;
-
-    //#endregion
-
-    /**
      * This is the main entry point for the application. It is used to setup Angular and
      * configure its controllers, services, etc.
      * 
@@ -47,11 +30,9 @@ module JustinCredible.SampleApp.Application {
         window.onerror = window_onerror;
 
         versionInfo = {
-            applicationName: "Sample App",
-            copyrightInfoUrl: "https://github.com/Justin-Credible/Ionic-TypeScript-Starter/blob/master/LICENSE",
-            websiteUrl: "http://www.justin-credible.net",
-            githubUrl: "https://github.com/Justin-Credible",
-            email: "justin.unterreiner@gmail.com",
+            applicationName: "RSVP 2015",
+            githubUrl: "https://github.com/mgiambalvo/rsvp",
+            email: "heathkit@gmail.com",
             majorVersion: window.buildVars.majorVersion,
             minorVersion: window.buildVars.minorVersion,
             buildVersion: window.buildVars.buildVersion,
@@ -59,46 +40,21 @@ module JustinCredible.SampleApp.Application {
             buildTimestamp: window.buildVars.buildTimestamp
         };
 
-        // Define the top level Angular module for the application.
-        // Here we also specify the Angular modules this module depends upon.
-        ngModule = angular.module("JustinCredible.SampleApp.Application", ["ui.router", "ionic", "ngMockE2E"]);
+        ngModule = angular.module("hkit.RSVP.Application", ["ui.router", "ionic", "ngMockE2E", "firebase"]);
 
-        // Define our constants.
         ngModule.constant("isRipple", !!(window.parent && window.parent.ripple));
         ngModule.constant("isCordova", typeof(cordova) !== "undefined");
         ngModule.constant("buildVars", window.buildVars);
         ngModule.constant("isChromeExtension", typeof (chrome) !== "undefined" && typeof (chrome.runtime) !== "undefined" && typeof (chrome.runtime.id) !== "undefined");
         ngModule.constant("versionInfo", versionInfo);
-        ngModule.constant("apiVersion", "1.0");
 
-        // Register the services, directives, filters, and controllers with Angular.
         registerServices();
         registerDirectives();
         registerFilters();
         registerControllers();
 
-        // Specify the initialize/run and configuration functions.
         ngModule.run(angular_initialize);
         ngModule.config(angular_configure);
-    }
-
-    //#region Helpers
-
-    /**
-     * Used construct an instance of an object using the new operator with the given constructor
-     * function and arguments.
-     * 
-     * http://stackoverflow.com/a/1608546/4005811
-     * 
-     * @param constructor The constructor function to invoke with the new keyword.
-     * @param args The arguments to be passed into the constructor function.
-     */
-    function construct(constructor, args) {
-        function F(): void {
-            return constructor.apply(this, args);
-        };
-        F.prototype = constructor.prototype;
-        return new F();
     }
 
     /**
@@ -148,7 +104,6 @@ module JustinCredible.SampleApp.Application {
      * with the given Angular module.
      */
     function registerFilters(): void {
-
         _.each(Filters, (Filter: any) => {
             if (Filter.ID && typeof(Filter.filter) === "function") {
                 console.log("Registering filter " + Filter.ID + "...");
@@ -162,33 +117,11 @@ module JustinCredible.SampleApp.Application {
      * with the given Angular module.
      */
     function registerControllers(): void {
-
         // Register each of the controllers that exist in the Controllers namespace.
         _.each(Controllers, (Controller: any) => {
             if (Controller.ID) {
                 console.log("Registering controller " + Controller.ID + "...");
                 ngModule.controller(Controller.ID, Controller);
-            }
-        });
-    }
-
-    /**
-     * Used to register each of the Controller classes that extend BaseDialog as dialogs
-     * with the UiHelper.
-     */
-    function registerDialogs(): void {
-
-        // Loop over each of the controllers, and for any controller that dervies from BaseController
-        // register it as a dialog using its ID with the UiHelper.
-        _.each(Controllers, (Controller: any) => {
-
-            // Don't try to register the BaseDialogController since it is abstract.
-            if (Controller === Controllers.BaseDialogController) {
-                return; // Continue
-            }
-
-            if (services.Utilities.derivesFrom(Controller, Controllers.BaseDialogController)) {
-                services.UiHelper.registerDialog(Controller.ID, Controller.TemplatePath);
             }
         });
     }

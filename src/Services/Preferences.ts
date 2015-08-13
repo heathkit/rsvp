@@ -1,4 +1,4 @@
-﻿module JustinCredible.SampleApp.Services {
+﻿module hkit.RSVP.Services {
 
     /**
      * Provides a way to easily get/set user preferences.

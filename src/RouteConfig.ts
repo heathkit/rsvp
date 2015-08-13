@@ -1,5 +1,4 @@
-
-module JustinCredible.SampleApp {
+module hkit.RSVP {
 
     /**
      * Used to define all of the client-side routes for the application.

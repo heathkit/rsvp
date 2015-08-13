@@ -1,4 +1,4 @@
-﻿module JustinCredible.SampleApp.Controllers {
+﻿module hkit.RSVP.Controllers {
 
     export class RootController extends BaseController<ViewModels.RootViewModel> {
 
