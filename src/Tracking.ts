@@ -13,12 +13,11 @@ module Hkit.RSVP.Tracking {
 
     public static get $inject(): string[] {
       return [
-        Settings.SettingsService.ID,
-        "firebase"
+        Settings.SettingsService.ID
       ];
     }
 
-    constructor(private settingsService: Settings.SettingsService, private firebase: ) {
+    constructor(private settingsService: Settings.SettingsService) {
     }
 
     startUpdating(): void {
