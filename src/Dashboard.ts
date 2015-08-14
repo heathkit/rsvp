@@ -18,7 +18,7 @@ module Hkit.RSVP.Dashboard {
       private $http: ng.IHttpService,
       private settings: Settings.SettingsService,
       private riderStatus: Tracking.RiderStatusService) {
-      console.log(settings);
+
       // Test fixture
       var test_statuses = [
         {  
@@ -34,12 +34,14 @@ module Hkit.RSVP.Dashboard {
             timestampMS: 1439939903750
           }
       ];
-      this.updateDisplay(test_statuses);
+      //this.updateDisplay(test_statuses);
+      riderStatus.onUpdate((statuses) => this.updateDisplay(statuses))
     }
 
     public statuses: { [key: string]:StatusDisplay } = {};
 
     public updateDisplay(riderStatuses: RiderStatus[]) {
+      console.log("Updating statuses");
       riderStatuses.forEach((status) => {
         var rider = status.rider;
         console.log(status);
@@ -49,6 +51,7 @@ module Hkit.RSVP.Dashboard {
           this.statuses[rider].updateStatus(status);
         }
       });
+      console.log(this.statuses);
     }
 
     public messages = [ ];

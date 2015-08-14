@@ -26,12 +26,33 @@ module Hkit.RSVP.Tracking {
       this.updateID = this.update();
     }
 
+    /**
+     * Register a callback to receive status updates.
+     * TODO - maybe return a handle or cleanup function.
+     */
+    onUpdate(callback: StatusCallback): void {
+      this.updateCallback = callback;
+    }
+
+    private updateCallback;
+
     update(): void {
       console.log("Updating position");
       window.navigator.geolocation.getCurrentPosition(
         (position) => {
           console.log("Position: ", position);
           this.lastPosition = position;
+          // TODO convert from meters/s
+          this.updateCallback([{
+              rider: 'Mike',
+              position: {
+                lat: position.coords.latitude,
+                long: position.coords.longitude,
+              },
+              speedMPH: position.coords.speed,
+              timestampMS: position.timestamp
+          }]);
+
           this.updateID = window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateIntervalMS);
         },
         (error) => {
@@ -40,6 +61,9 @@ module Hkit.RSVP.Tracking {
         },
         this.posOptions);
       // TODO broadcast the update to firebase
+      
     }
   }
+
+  export interface StatusCallback { (statuses: Dashboard.RiderStatus[]): void }
 }
