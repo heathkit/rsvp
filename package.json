@@ -55,7 +55,8 @@
     "cordova-plugin-geolocation",
     "com.megster.cordova.ble",
     "com.ionic.keyboard",
-    "plugin.http.request"
+    "plugin.http.request",
+    "org.apache.cordova.geolocation"
   ],
   "cordovaPlatforms": [
     "android",

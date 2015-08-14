@@ -3,10 +3,11 @@ module Hkit.RSVP.Tracking {
     public static ID = "RiderStatusService";
 
     public lastPosition: Position;
+    private updateID: any;
 
     private updater: RiderStatusService;
     private posOptions = {
-      timeout: 5000,
+      timeout: 20000,
       enableHighAccuracy: true
     };
 
@@ -20,7 +21,8 @@ module Hkit.RSVP.Tracking {
     }
 
     startUpdating(): void {
-      this.update();
+      window.clearTimeout(this.updateID);
+      this.updateID = this.update();
     }
 
     update(): void {
