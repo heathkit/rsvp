@@ -13,11 +13,12 @@ module Hkit.RSVP.Tracking {
 
     public static get $inject(): string[] {
       return [
-        Settings.SettingsService.ID
+        Settings.SettingsService.ID,
+        "firebase"
       ];
     }
 
-    constructor(private settingsService: Settings.SettingsService) {
+    constructor(private settingsService: Settings.SettingsService, private firebase: ) {
     }
 
     startUpdating(): void {
@@ -29,12 +30,13 @@ module Hkit.RSVP.Tracking {
       console.log("Updating position");
       window.navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log("Position: ", position);
           this.lastPosition = position;
-          window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateInterval);
+          this.updateID = window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateInterval*1000);
         },
         (error) => {
           console.warn("Error getting position: ", error);
-          window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateInterval);
+          this.updateID = window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateInterval*1000);
         },
         this.posOptions);
       // TODO broadcast the update to firebase

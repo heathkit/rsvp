@@ -26,7 +26,7 @@ module Hkit.RSVP.Settings {
   export class SettingsService {
     public static ID = "SettingsService";
 
-    public positionUpdateInterval = 5000;
+    public positionUpdateInterval = 30;
 
     public static get $inject(): string[] {
       return [
