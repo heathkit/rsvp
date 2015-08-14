@@ -24,5 +24,11 @@
       "angular-ui-router",
       "jquery"
     ]
+  },
+  "resolve": {
+    "angular": "1.4.4"
+  },
+  "resolutions": {
+    "angular": "~1.4.4"
   }
 }
