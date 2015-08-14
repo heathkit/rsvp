@@ -1,4 +1,4 @@
-module Hkit.RSVP.App {
+module Hkit.RSVP.Application {
     var ngModule: ng.IModule;
 
     /**
@@ -21,7 +21,7 @@ module Hkit.RSVP.App {
         // Set the default error handler for all uncaught exceptions.
         window.onerror = window_onerror;
 
-        ngModule = angular.module("hkit.RSVP.Application", ["ui.router", "ionic", "ngMockE2E", "firebase"]);
+        ngModule = angular.module("Hkit.RSVP.Application", ["ui.router", "ionic", "firebase"]);
 
         ngModule.controller(Dashboard.DashboardController.ID, Dashboard.DashboardController);
         ngModule.controller(Settings.SettingsController.ID, Settings.SettingsController);

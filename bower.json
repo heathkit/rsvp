@@ -9,7 +9,9 @@
     "uri.js": "~1.16.0",
     "angular-mocks": "~1.4.4",
     "stacktrace": "~0.6.4",
-    "geolib": "~2.0.18"
+    "geolib": "~2.0.18",
+    "angular-animate": "~1.4.4",
+    "angularfire": "~1.1.2"
   },
   "install": {
     "path": "www/lib",

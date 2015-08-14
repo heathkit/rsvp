@@ -2,13 +2,13 @@ module Hkit.RSVP {
   export class RouteConfig {
 
     public static setupRoutes($stateProvider: ng.ui.IStateProvider, $urlRouterProvider: ng.ui.IUrlRouterProvider): void {
-      $urlRouterProvider.otherwise("/app");
+      $urlRouterProvider.otherwise("/");
 
       $stateProvider.state("dashboard", {
         url: "/dashboard",
         views: {
-          "root-view": {
-            templateUrl: "templates/Dashboard.html",
+          dashboard: {
+            templateUrl: "templates/dashboard.html",
             controller: Dashboard.DashboardController.ID,
             controllerAs: "dashboard"
           }
@@ -18,8 +18,8 @@ module Hkit.RSVP {
       $stateProvider.state("settings", {
         url: "/settings",
         views: {
-          "root-view": {
-            templateUrl: "templates/Settings.html",
+          settings: {
+            templateUrl: "templates/settings.html",
             controller: Settings.SettingsController.ID,
             controllerAs: "settings"
           }
