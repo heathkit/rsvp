@@ -7,17 +7,20 @@ module Hkit.RSVP.Dashboard {
         "$scope",
         "$location",
         "$http",
+        Settings.SettingsService.ID,
+        Tracking.RiderStatusService.ID
       ];
     }
 
     constructor(
       $scope: ng.IScope,
       private $location: ng.ILocationService,
-      private $http: ng.IHttpService) {
-      console.log("Constructed");
-
+      private $http: ng.IHttpService,
+      private settings: Settings.SettingsService,
+      private riderStatus: Tracking.RiderStatusService) {
+      console.log(settings);
       // Test fixture
-      var statuses = [
+      var test_statuses = [
         {  
           rider: 'Sharene',
             position: {lat: 1, long: 1},
@@ -28,21 +31,27 @@ module Hkit.RSVP.Dashboard {
           rider: 'Stephen',
             position: {lat: 1, long: 1},
             speedMPH: 12,
-            timestampMS: 1439539703750
+            timestampMS: 1439939903750
           }
       ];
-      this.updateDisplay(statuses);
+      this.updateDisplay(test_statuses);
     }
 
-    public statuses: { [key: string]:StatusDisplay };
+    public statuses: { [key: string]:StatusDisplay } = {};
 
     public updateDisplay(riderStatuses: RiderStatus[]) {
-      for(var status in riderStatuses) { 
-      }
+      riderStatuses.forEach((status) => {
+        var rider = status.rider;
+        console.log(status);
+        if (this.statuses[rider] == undefined) {
+          this.statuses[rider] = new StatusDisplay(status);
+        } else {
+          this.statuses[rider].updateStatus(status);
+        }
+      });
     }
 
-    public messages = [
-    ];
+    public messages = [ ];
   }
 
   export class StatusDisplay {

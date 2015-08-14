@@ -2,7 +2,7 @@
   <ion-content padding="true">
     <ion-list>
       <ion-item ng-repeat="(rider, status) in dashboard.statuses | orderBy:rider">
-        {{rider}} 
+        {{status.rider}} 
         <span class="status-speed">{{status.speed}}</span>
         <span class="status-distance">{{status.distance}}</span>
         <span class="status-age">{{status.age}}</span>

@@ -7,8 +7,9 @@ module Hkit.RSVP.Tracking {
 
     private updater: RiderStatusService;
     private posOptions = {
-      timeout: 20000,
-      enableHighAccuracy: true
+      timeout: 75000,
+      enableHighAccuracy: true,
+      maximumAge: 75000
     };
 
     public static get $inject(): string[] {
@@ -31,11 +32,11 @@ module Hkit.RSVP.Tracking {
         (position) => {
           console.log("Position: ", position);
           this.lastPosition = position;
-          this.updateID = window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateInterval*1000);
+          this.updateID = window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateIntervalMS);
         },
         (error) => {
           console.warn("Error getting position: ", error);
-          this.updateID = window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateInterval*1000);
+          this.updateID = window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateIntervalMS);
         },
         this.posOptions);
       // TODO broadcast the update to firebase
