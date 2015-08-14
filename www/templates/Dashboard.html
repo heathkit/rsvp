@@ -1,6 +1,11 @@
 <ion-view title="Dashboard">
   <ion-content padding="true">
-    <h2>Home Page</h2>
-    <p>Here's the main route for the app.</p>
+    <ion-list>
+      <ion-item ng-repeat="status in dashboard.statuses">
+        {{status.rider}}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+  <ion-content>
   </ion-content>
 </ion-view>

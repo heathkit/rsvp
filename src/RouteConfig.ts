@@ -9,8 +9,7 @@ module Hkit.RSVP {
         views: {
           dashboard: {
             templateUrl: "templates/dashboard.html",
-            controller: Dashboard.DashboardController.ID,
-            controllerAs: "dashboard"
+            controller: "DashboardController as dashboard"
           }
         }
       });
@@ -20,8 +19,7 @@ module Hkit.RSVP {
         views: {
           settings: {
             templateUrl: "templates/settings.html",
-            controller: Settings.SettingsController.ID,
-            controllerAs: "settings"
+            controller: "SettingsController as settings"
           }
         }
       });
