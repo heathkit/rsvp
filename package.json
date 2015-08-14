@@ -36,6 +36,7 @@
     "tsd": "^0.6.3",
     "tslint": "^2.4.2",
     "typescript": "^1.5.3",
+    "typescript-formatter": "^0.4.3",
     "xmldom": "0.1.19",
     "xpath": "0.0.9"
   },
@@ -54,16 +55,7 @@
     "cordova-plugin-geolocation",
     "com.megster.cordova.ble",
     "com.ionic.keyboard",
-    "plugin.google.maps",
-    "plugin.http.request",
-    {
-      "locator": "https://github.com/wf9a5m75/google-play-services",
-      "id": "com.google.playservices"
-    },
-    {
-      "locator": "https://github.com/wf9a5m75/googlemaps-ios-sdk-for-phonegap",
-      "id": "com.googlemaps.ios"
-    }
+    "plugin.http.request"
   ],
   "cordovaPlatforms": [
     "android",
