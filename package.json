@@ -1,13 +1,12 @@
 {
-  "name": "SampleApp",
+  "name": "RSVP",
   "version": "1.0.0",
-  "description": "SampleApp: A starter application using Ionic and TypeScript.",
-  "author": "Justin Unterreiner",
+  "description": "RSVP: A simple app for the Seattle to Vancouver Cascade ride.",
+  "author": "Michael Giamblavo",
   "license": "MIT",
-  "homepage": "http://www.justin-credible.net/Projects/Ionic-TypeScript-MDHA-Starter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Justin-Credible/Ionic-TypeScript-Starter.git"
+    "url": "https://github.com/mgiambalvo/rsvp"
   },
   "dependencies": {
     "async": "^1.4.2",
@@ -55,7 +54,8 @@
     "cordova-plugin-geolocation",
     "com.megster.cordova.ble",
     "com.ionic.keyboard",
-    "plugin.http.request"
+    "plugin.http.request",
+    "org.apache.cordova.geolocation"
   ],
   "cordovaPlatforms": [
     "android",
