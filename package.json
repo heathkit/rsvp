@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "async": "^1.4.2",
-    "bower": "1.4.1",
-    "bower-installer": "1.2.0",
+    "bower": "^1.4.1",
+    "bower-installer": "^1.2.0",
     "cordova": "5.1.1",
     "del": "^1.2.1",
     "gulp": "3.9.0",

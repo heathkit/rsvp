@@ -1,4 +1,4 @@
-module hkit.RSVP.App {
+module Hkit.RSVP.App {
     var ngModule: ng.IModule;
 
     /**
@@ -9,12 +9,6 @@ module hkit.RSVP.App {
         $rootScope: ng.IRootScopeService,
         $location: ng.ILocationService,
         $ionicHistory: any,
-        Utilities: Services.Utilities,
-        UiHelper: Services.UiHelper,
-        Preferences: Services.Preferences,
-        Configuration: Services.Configuration,
-        MockHttpApis: Services.MockHttpApis,
-        Logger: Services.Logger
     };
 
     /**
@@ -24,228 +18,17 @@ module hkit.RSVP.App {
      * It is invoked via the Main.js script included from the index.html page.
      */
     export function main(): void {
-        var versionInfo: Interfaces.VersionInfo;
-
         // Set the default error handler for all uncaught exceptions.
         window.onerror = window_onerror;
 
-        versionInfo = {
-            applicationName: "RSVP 2015",
-            githubUrl: "https://github.com/mgiambalvo/rsvp",
-            email: "heathkit@gmail.com",
-            majorVersion: window.buildVars.majorVersion,
-            minorVersion: window.buildVars.minorVersion,
-            buildVersion: window.buildVars.buildVersion,
-            versionString: window.buildVars.majorVersion + "." + window.buildVars.minorVersion + "." + window.buildVars.buildVersion,
-            buildTimestamp: window.buildVars.buildTimestamp
-        };
-
         ngModule = angular.module("hkit.RSVP.Application", ["ui.router", "ionic", "ngMockE2E", "firebase"]);
 
-        ngModule.constant("isRipple", !!(window.parent && window.parent.ripple));
-        ngModule.constant("isCordova", typeof(cordova) !== "undefined");
-        ngModule.constant("buildVars", window.buildVars);
-        ngModule.constant("isChromeExtension", typeof (chrome) !== "undefined" && typeof (chrome.runtime) !== "undefined" && typeof (chrome.runtime.id) !== "undefined");
-        ngModule.constant("versionInfo", versionInfo);
-
-        registerServices();
-        registerDirectives();
-        registerFilters();
-        registerControllers();
+        ngModule.controller(Dashboard.DashboardController.ID, Dashboard.DashboardController);
+        ngModule.controller(Settings.SettingsController.ID, Settings.SettingsController);
 
         ngModule.run(angular_initialize);
         ngModule.config(angular_configure);
     }
-
-    /**
-     * Used to register each of the services that exist in the Service namespace
-     * with the given Angular module.
-     */
-    function registerServices(): void {
-        // Register each of the services that exist in the Service namespace.
-        _.each(Services, (Service: any) => {
-            // A static ID property is required to register a service.
-            if (Service.ID) {
-                if (typeof(Service.getFactory) === "function") {
-                    // If a static method named getFactory() is available we'll invoke it
-                    // to get a factory function to register as a factory.
-                    console.log("Registering factory " + Service.ID + "...");
-                    ngModule.factory(Service.ID, Service.getFactory());
-                }
-                else {
-                    console.log("Registering service " + Service.ID + "...");
-                    ngModule.service(Service.ID, Service);
-                }
-            }
-        });
-    }
-
-    /**
-     * Used to register each of the directives that exist in the Directives namespace
-     * with the given Angular module.
-     */
-    function registerDirectives(): void {
-
-        _.each(Directives, (Directive: any) => {
-            if (Directive.ID) {
-                if (Directive.__BaseElementDirective) {
-                    console.log("Registering element directive " + Directive.ID + "...");
-                    ngModule.directive(Directive.ID, getElementDirectiveFactoryFunction(Directive));
-                }
-                else {
-                    ngModule.directive(Directive.ID, getDirectiveFactoryParameters(Directive));
-                }
-            }
-        });
-    }
-
-    /**
-     * Used to register each of the filters that exist in the Filters namespace
-     * with the given Angular module.
-     */
-    function registerFilters(): void {
-        _.each(Filters, (Filter: any) => {
-            if (Filter.ID && typeof(Filter.filter) === "function") {
-                console.log("Registering filter " + Filter.ID + "...");
-                ngModule.filter(Filter.ID, getFilterFactoryFunction(Filter.filter));
-            }
-        });
-    }
-
-    /**
-     * Used to register each of the controllers that exist in the Controller namespace
-     * with the given Angular module.
-     */
-    function registerControllers(): void {
-        // Register each of the controllers that exist in the Controllers namespace.
-        _.each(Controllers, (Controller: any) => {
-            if (Controller.ID) {
-                console.log("Registering controller " + Controller.ID + "...");
-                ngModule.controller(Controller.ID, Controller);
-            }
-        });
-    }
-
-    /**
-     * Used to create a function that returns a data structure describing an Angular directive
-     * for an element from one of our own classes implementing IElementDirective. It handles
-     * creating an instance and invoked the render method when linking is invoked.
-     * 
-     * @param Directive A class reference (not instance) to a element directive class that implements Directives.IElementDirective.
-     * @returns A factory function that can be used by Angular to create an instance of the element directive.
-     */
-    function getElementDirectiveFactoryFunction(Directive: Directives.IElementDirectiveClass): any[] {
-        var params = [],
-            injectedArguments: IArguments = null,
-            descriptor: ng.IDirective = {};
-
-        /* tslint:disable:no-string-literal */
-
-        // If the directive is annotated with an injection array, we'll add the injection
-        // array's values to the list first.
-        if (Directive["$inject"]) {
-            params = params.concat(Directive["$inject"]);
-        }
-
-        // Here we set the options for the Angular directive descriptor object.
-        // We get these values from the static fields on the class reference.
-        descriptor.restrict = Directive["restrict"];
-        descriptor.template = Directive["template"];
-        descriptor.replace = Directive["replace"];
-        descriptor.transclude = Directive["transclude"];
-        descriptor.scope = Directive["scope"];
-
-        /* tslint:enable:no-string-literal */
-
-        if (descriptor.restrict !== "E") {
-            console.warn("BaseElementDirectives are meant to restrict only to element types.");
-        }
-
-        // Here we define the link function that Angular invokes when it is linking the
-        // directive to the element.
-        descriptor.link = (scope: ng.IScope, instanceElement: ng.IAugmentedJQuery, instanceAttributes: ng.IAttributes, controller: any, transclude: ng.ITranscludeFunction): void => {
-
-            // New up an instance of the directive for to link to this element.
-            // Pass along the arguments that were injected so the instance can receive them.
-            var instance = <Directives.BaseElementDirective<any>>construct(Directive, injectedArguments);
-
-            /* tslint:disable:no-string-literal */
-
-            // Set the protected properties.
-            instance["scope"] = scope;
-            instance["element"] = instanceElement;
-            instance["attributes"] = instanceAttributes;
-            instance["controller"] = controller;
-            instance["transclude"] = transclude;
-
-            /* tslint:enable:no-string-literal */
-
-            // Delegate to the initialize and render methods.
-            instance.initialize();
-            instance.render();
-        };
-
-        // The last parameter in the array is the function that will be executed by Angular
-        // when the directive is being used.
-        params.push(function () {
-
-            // Save off a reference to the array of injected objects so we can use them when
-            // constructing an instance of the directive (see above). These arguments are the
-            // objects that were injected via the $inject property.
-            injectedArguments = arguments;
-
-            // Return the descriptor object which describes the directive to Angular.
-            return descriptor;
-        });
-
-        return params;
-    }
-
-    /**
-     * Used to create an array of injection property names followed by a function that will be
-     * used by Angular to create an instance of the given directive.
-     * 
-     * @param Directive A class reference (not instance) to a directive class.
-     * @returns An array of injection property names followed by a factory function for use by Angular.
-     */
-    function getDirectiveFactoryParameters(Directive: ng.IDirective): any[] {
-
-        var params = [];
-
-        /* tslint:disable:no-string-literal */
-
-        // If the directive is annotated with an injection array, we'll add the injection
-        // array's values to the list first.
-        if (Directive["$inject"]) {
-            params = params.concat(Directive["$inject"]);
-        }
-
-        /* tslint:enable:no-string-literal */
-
-        // The last parameter in the array is the function that will be executed by Angular
-        // when the directive is being used.
-        params.push(function () {
-            // Create a new instance of the directive, passing along the arguments (which
-            // will be the values injected via the $inject annotation).
-            return construct(Directive, arguments);
-        });
-
-        return params;
-    }
-
-
-    /**
-     * Used to create a function that returns a function for use by a filter.
-     * 
-     * @param fn The function that will provide the filter's logic.
-     */
-    function getFilterFactoryFunction(fn: Function): () => Function {
-        return function () { return fn; };
-    }
-
-    //#endregion
-
-    //#region Platform Configuration
 
     /**
      * The main initialize/run function for Angular; fired once the AngularJs framework is done loading.
@@ -257,26 +40,14 @@ module hkit.RSVP.App {
         $rootScope: ng.IScope,
         $location: ng.ILocationService,
         $ionicHistory: any,
-        $ionicPlatform: Ionic.IPlatform,
-        Utilities: Services.Utilities,
-        UiHelper: Services.UiHelper,
-        Preferences: Services.Preferences,
-        Configuration: Services.Configuration,
-        MockHttpApis: Services.MockHttpApis,
-        Logger: Services.Logger
+        $ionicPlatform: any
         ): void {
 
         // Save off references to the modules for use within this application module.
         services = {
             $rootScope: $rootScope,
             $location: $location,
-            $ionicHistory: $ionicHistory,
-            Utilities: Utilities,
-            UiHelper: UiHelper,
-            Preferences: Preferences,
-            Configuration: Configuration,
-            MockHttpApis: MockHttpApis,
-            Logger: Logger
+            $ionicHistory: $ionicHistory
         };
 
         // Once AngularJs has loaded we'll wait for the Ionic platform's ready event.
@@ -284,9 +55,6 @@ module hkit.RSVP.App {
         $ionicPlatform.ready(function () {
             ionicPlatform_ready();
         });
-
-        // Mock up or allow HTTP responses.
-        MockHttpApis.mockHttpCalls(Configuration.enableMockHttpCalls);
     };
 
     /**
@@ -301,14 +69,6 @@ module hkit.RSVP.App {
 
         // Subscribe to Angular events.
         services.$rootScope.$on("$locationChangeStart", angular_locationChangeStart);
-
-        // Register all of the dialogs with the UiHelper.
-        registerDialogs();
-
-        // We use this combination of settings so prevent the visual jank that
-        // would otherwise occur when tapping an input that shows the keyboard.
-        services.UiHelper.keyboard.disableScroll(true);
-        services.UiHelper.keyboard.hideKeyboardAccessoryBar(false);
 
         // Now that the platform is ready, we'll delegate to the resume event.
         // We do this so the same code that fires on resume also fires when the
@@ -346,34 +106,17 @@ module hkit.RSVP.App {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|ghttps?|ms-appx|x-wmapp0|chrome-extension):/);
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|ms-appx|x-wmapp0):|data:image\//);
 
-        // Register our custom interceptor with the HTTP provider so we can hook into AJAX request events.
-        $httpProvider.interceptors.push(Services.HttpInterceptor.ID);
-
         // Setup all of the client side routes and their controllers and views.
         RouteConfig.setupRoutes($stateProvider, $urlRouterProvider);
-
-        // If mock API calls are enabled, then we'll add a random delay for all HTTP requests to simulate
-        // network latency so we can see the spinners and loading bars. Useful for demo purposes.
-        if (localStorage.getItem("ENABLE_MOCK_HTTP_CALLS") === "true") {
-            Services.MockHttpApis.setupMockHttpDelay($provide);
-        }
     };
 
-    //#endregion
-
-    //#region Event Handlers
 
     /**
      * Fired when the OS decides to minimize or pause the application. This usually
      * occurs when the user presses the device's home button or switches applications.
      */
     function device_pause(): void {
-
-        if (!isShowingPinPrompt) {
-            // Store the current date/time. This will be used to determine if we need to
-            // show the PIN lock screen the next time the application is resumed.
-            services.Configuration.lastPausedAt = moment();
-        }
+      console.log("Device pause");
     }
 
     /**
@@ -382,49 +125,7 @@ module hkit.RSVP.App {
      * to switch back to the application.
      */
     function device_resume(): void {
-
-        isShowingPinPrompt = true;
-
-        // Potentially display the PIN screen.
-        services.UiHelper.showPinEntryAfterResume().then(() => {
-            isShowingPinPrompt = false;
-
-            // If the user hasn't completed onboarding (eg new, first-time use of the app)
-            // then we'll push them straight into the onboarding flow. Note that we do this
-            // purposefully after the PIN screen for the case where the user may be upgrading
-            // from a version of the application that doesn't have onboarding (we wouldn't
-            // want them to be able to bypass the PIN entry in that case).
-            if (!services.Configuration.hasCompletedOnboarding) {
-
-                // Tell Ionic to not animate and clear the history (hide the back button)
-                // for the next view that we'll be navigating to below.
-                services.$ionicHistory.nextViewOptions({
-                    disableAnimate: true,
-                    disableBack: true
-                });
-
-                // Navigate the user to the onboarding splash view.
-                services.$location.path("/app/onboarding/splash");
-                services.$location.replace();
-
-                return;
-            }
-
-            // If the user is still at the blank sreen, then push them to their default view.
-            if (services.$location.url() === "/app/blank") {
-
-                // Tell Ionic to not animate and clear the history (hide the back button)
-                // for the next view that we'll be navigating to below.
-                services.$ionicHistory.nextViewOptions({
-                    disableAnimate: true,
-                    disableBack: true
-                });
-
-                // Navigate the user to their default view.
-                services.$location.path(services.Utilities.defaultCategory.href.substring(1));
-                services.$location.replace();
-            }
-        });
+      console.log("Device resume");
     }
 
     /**
@@ -432,9 +133,7 @@ module hkit.RSVP.App {
      * This isn't used for iOS devices because they do not have a menu button key.
      */
     function device_menuButton(): void {
-        // Broadcast this event to all child scopes. This allows controllers for individual
-        // views to handle this event and show a contextual menu etc.
-        services.$rootScope.$broadcast(Constants.Events.APP_MENU_BUTTON);
+      console.log("Menu pressed");
     }
 
     /**
@@ -451,25 +150,6 @@ module hkit.RSVP.App {
     function window_onerror(message: any, uri: string, lineNumber: number, columnNumber?: number): void {
 
         console.error("Unhandled JS Exception", message, uri, lineNumber, columnNumber);
-
-        try {
-            // Show a generic message to the user.
-            services.UiHelper.toast.showLongBottom("An error has occurred; please try again.");
-
-            // If this exception occurred in the HttpInterceptor, there may still be a progress indicator on the scrren.
-            services.UiHelper.progressIndicator.hide();
-        }
-        catch (ex) {
-            console.warn("There was a problem alerting the user to an Angular error; falling back to a standard alert().", ex);
-            alert("An error has occurred; please try again.");
-        }
-
-        try {
-            services.Logger.logWindowError(message, uri, lineNumber, columnNumber);
-        }
-        catch (ex) {
-            console.error("An error occurred while attempting to log an exception.", ex);
-        }
     }
 
     /**
@@ -486,25 +166,5 @@ module hkit.RSVP.App {
 
         console.error("AngularJS Exception", exception, cause);
 
-        try {
-            // Show a generic message to the user.
-            services.UiHelper.toast.showLongBottom("An error has occurred; please try again.");
-
-            // If this exception occurred in the HttpInterceptor, there may still be a progress indicator on the scrren.
-            services.UiHelper.progressIndicator.hide();
-        }
-        catch (ex) {
-            console.warn("There was a problem alerting the user to an Angular error; falling back to a standard alert().", ex);
-            alert("An error has occurred; please try again.");
-        }
-
-        try {
-            services.Logger.logError("Angular exception caused by " + cause, exception);
-        }
-        catch (ex) {
-            console.error("An error occurred while attempting to log an Angular exception.", ex);
-        }
     }
-
-    //#endregion
 }

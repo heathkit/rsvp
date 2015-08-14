@@ -14,4 +14,4 @@ if (typeof (chrome) !== "undefined" && typeof (chrome.runtime) !== "undefined" &
 }
 
 // Start the application by invoking the main entry point method defined in Application.ts.
-hkit.RSVP.Application.main();
+Hkit.RSVP.Application.main();
