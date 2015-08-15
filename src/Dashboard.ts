@@ -24,7 +24,7 @@ module Hkit.RSVP.Dashboard {
         {  
           rider: 'Sharene',
             position: {lat: 1, long: 1},
-            speedMPH: 12,
+            speedMPH: 10,
             timestampMS: 1439539703750
           },
         {
@@ -34,21 +34,33 @@ module Hkit.RSVP.Dashboard {
             timestampMS: 1439939903750
           }
       ];
-      //this.updateDisplay(test_statuses);
-      riderStatus.onUpdate((statuses) => this.updateDisplay(statuses))
+      this.statuses = {};
+      this.myStatus = new StatusDisplay();
+      this.updateCounter = 0;
+      $scope['dashboard'] = this;
+
+      this.updateDisplay(test_statuses);
+      riderStatus.onUpdate((statuses) => {
+        this.updateDisplay(statuses);
+      });
     }
 
     public statuses: { [key: string]:StatusDisplay } = {};
+    public myStatus: StatusDisplay = new StatusDisplay();
+    public updateCounter: number;
 
     public updateDisplay(riderStatuses: RiderStatus[]) {
-      console.log("Updating statuses");
-      riderStatuses.forEach((status) => {
-        var rider = status.rider;
-        console.log(status);
-        if (this.statuses[rider] == undefined) {
-          this.statuses[rider] = new StatusDisplay(status);
+      this.updateCounter++;
+      riderStatuses.forEach((riderStatus) => {
+        var rider = riderStatus.rider;
+        if (riderStatus.rider === this.settings.myRider) {
+          this.myStatus.updateStatus(riderStatus);
+          console.log('My new status:' + JSON.stringify(this.myStatus));
         } else {
-          this.statuses[rider].updateStatus(status);
+          if (!this.statuses[riderStatus.rider]) {
+            this.statuses[riderStatus.rider] = new StatusDisplay();
+          }
+          this.statuses[riderStatus.rider].updateStatus(riderStatus);
         }
       });
       console.log(this.statuses);
@@ -58,26 +70,31 @@ module Hkit.RSVP.Dashboard {
   }
 
   export class StatusDisplay {
-    public rider: string;
-    private status: RiderStatus;
+    public age: string;
+    public distance: string;
+    public speed: string;
 
-    constructor(status: RiderStatus) {
-      this.rider = status.rider;
-      this.updateStatus(status);
+    private status: RiderStatus = undefined;
+
+    constructor() {
     }
 
     public updateStatus(status: RiderStatus) {
-      // Check for rider match here? 
       this.status = status;
+      this.update();
     }
-
-    public get age(): string {
-      return moment(this.status.timestampMS).fromNow();
-    }
-
-    public get distance(): number {
-      // Need to get current location
-      return 100;
+    
+    public update() {
+      if (!this.status === undefined) {
+        return;
+      }
+      this.age = moment(this.status.timestampMS).fromNow();
+      this.distance = `150`;
+      if (this.status.speedMPH === null) {
+        this.speed = "unk";
+      } else {
+        this.speed = `${this.status.speedMPH.toPrecision(2)} m/h`;
+      }
     }
   }
 

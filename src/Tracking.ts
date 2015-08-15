@@ -14,11 +14,14 @@ module Hkit.RSVP.Tracking {
 
     public static get $inject(): string[] {
       return [
+        '$timeout',
         Settings.SettingsService.ID
       ];
     }
 
-    constructor(private settingsService: Settings.SettingsService) {
+    constructor(
+        private $timeout: ng.ITimeoutService,
+        private settingsService: Settings.SettingsService) {
     }
 
     startUpdating(): void {
@@ -34,7 +37,7 @@ module Hkit.RSVP.Tracking {
       this.updateCallback = callback;
     }
 
-    private updateCallback;
+    private updateCallback: StatusCallback;
 
     update(): void {
       console.log("Updating position");
@@ -43,21 +46,23 @@ module Hkit.RSVP.Tracking {
           console.log("Position: ", position);
           this.lastPosition = position;
           // TODO convert from meters/s
-          this.updateCallback([{
-              rider: 'Mike',
-              position: {
-                lat: position.coords.latitude,
-                long: position.coords.longitude,
-              },
-              speedMPH: position.coords.speed,
-              timestampMS: position.timestamp
-          }]);
+          if (this.updateCallback) {
+            this.updateCallback([{
+                rider: 'Mike',
+                position: {
+                  lat: position.coords.latitude,
+                  long: position.coords.longitude,
+                },
+                speedMPH: position.coords.speed,
+                timestampMS: position.timestamp
+            }]);
+          }
 
-          this.updateID = window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateIntervalMS);
+          this.updateID = this.$timeout(() => { this.update() }, this.settingsService.positionUpdateIntervalMS);
         },
         (error) => {
           console.warn("Error getting position: ", error);
-          this.updateID = window.setTimeout(() => { this.update() }, this.settingsService.positionUpdateIntervalMS);
+          this.updateID = this.$timeout(() => { this.update() }, this.settingsService.positionUpdateIntervalMS);
         },
         this.posOptions);
       // TODO broadcast the update to firebase

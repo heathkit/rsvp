@@ -1,16 +1,18 @@
 <ion-view title="Dashboard">
   <ion-content padding="true">
     <ion-list>
-      <ion-item ng-repeat="status in dashboard.statuses track by status.rider">
-        {{status.rider}} 
-        <span class="status-speed">{{status.speedMPH}}</span>
-        <!--
+      <ion-item ng-repeat="(rider, status) in dashboard.statuses">
+        {{rider}} 
+        <span class="status-speed">{{status.speed}}</span>
         <span class="status-distance">{{status.distance}}</span>
         <span class="status-age">{{status.age}}</span>
-        -->
       </ion-item>
     </ion-list>
+    <div>
+      Speed: {{dashboard.myStatus.speed}} {{dashboard.myStatus.age}}
+    </div>
   </ion-content>
   <ion-content>
+  Messages! {{dashboard.updateCounter}}
   </ion-content>
 </ion-view>
