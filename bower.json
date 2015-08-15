@@ -7,10 +7,10 @@
     "moment": "~2.10.6",
     "nprogress": "~0.2.0",
     "uri.js": "~1.16.0",
-    "angular-mocks": "~1.4.4",
+    "angular-mocks": "~1.4.3",
     "stacktrace": "~0.6.4",
     "geolib": "~2.0.18",
-    "angular-animate": "~1.4.4",
+    "angular-animate": "~1.4.3",
     "angularfire": "~1.1.2"
   },
   "install": {
@@ -28,9 +28,6 @@
     ]
   },
   "resolve": {
-    "angular": "1.4.4"
-  },
-  "resolutions": {
-    "angular": "~1.4.4"
+    "angular": "~1.4.3"
   }
 }
