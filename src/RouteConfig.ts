@@ -9,7 +9,7 @@ module Hkit.RSVP {
         views: {
           dashboard: {
             templateUrl: "templates/dashboard.html",
-            controller: "DashboardController as dashboard"
+            controller: "DashboardController"
           }
         }
       });
