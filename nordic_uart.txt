@@ -1,0 +1,32 @@
+Service UUID: 6e400001-b5a3-f393-e0a9-e50e24dcca9e
+TX from device: "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
+RX to device: "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
+
+ble.scan([], 5, function(device) {
+    console.log(JSON.stringify(device));
+    });
+ble.disconnect("EC:DC:00:5E:D8:C1", function() { console.log("success!") });
+
+Reading from the letterbox
+
+    encoder = new TextEncoder();
+    decoder = new TextDecoder();
+
+    ble.connect("EC:DC:00:5E:D8:C1", function(peripheral) { console.log(peripheral) }, function(error) { console.log(error)});
+
+    ble.startNotification(
+        "EC:DC:00:5E:D8:C1", 
+        "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+        "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
+        function(data) { console.log(decoder.decode(data)); },
+        function(error) { console.log(error) });
+
+    ble.write(
+        "EC:DC:00:5E:D8:C1", 
+        "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+        "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
+        encoder.encode("a test string"),
+        function(data) { console.log(data); },
+        function(error) { console.log(error) });
+
+Writing to it:
