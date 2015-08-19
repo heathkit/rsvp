@@ -2,31 +2,72 @@ Service UUID: 6e400001-b5a3-f393-e0a9-e50e24dcca9e
 TX from device: "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
 RX to device: "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
 
-ble.scan([], 5, function(device) {
-    console.log(JSON.stringify(device));
-    });
-ble.disconnect("EC:DC:00:5E:D8:C1", function() { console.log("success!") });
-
 Reading from the letterbox
 
-    encoder = new TextEncoder();
-    decoder = new TextDecoder();
+    var encoder = new TextEncoder();
+    var decoder = new TextDecoder();
 
-    ble.connect("EC:DC:00:5E:D8:C1", function(peripheral) { console.log(peripheral) }, function(error) { console.log(error)});
+    function scan() {
+      ble.scan([], 5, function(device) {
+          console.log(JSON.stringify(device));
+      });
+    }
 
-    ble.startNotification(
-        "EC:DC:00:5E:D8:C1", 
-        "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
-        "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
-        function(data) { console.log(decoder.decode(data)); },
-        function(error) { console.log(error) });
+    function disconnect() {
+      ble.disconnect("EC:DC:00:5E:D8:C1", function() { console.log("success!") });
+    }
 
-    ble.write(
-        "EC:DC:00:5E:D8:C1", 
-        "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
-        "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
-        encoder.encode("a test string"),
-        function(data) { console.log(data); },
-        function(error) { console.log(error) });
+    function connect() {
+      var connect = new Promise( function(resolve, reject) { 
+        ble.connect("EC:DC:00:5E:D8:C1", function(peripheral) { resolve(peripheral) }, 
+          function(error) { reject(error)});
+      });
+
+      connect.then(function(){
+        ble.startNotification(
+            "EC:DC:00:5E:D8:C1", 
+            "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+            "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
+            function(data) { 
+            console.log("Got message: " + decoder.decode(data));
+            console.log(data);
+            },
+            function(error) { console.log("Notify error: " + error) });
+      });
+    };
+
+    function read() {
+      ble.write(
+          "EC:DC:00:5E:D8:C1", 
+          "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+          "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
+          stringToBytes("r"),
+          function(data) { console.log(data); },
+          function(error) { console.log(error) });
+          }
+
+    function write(message) {
+      ble.write(
+          "EC:DC:00:5E:D8:C1", 
+          "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+          "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
+          stringToBytes("s" + message),
+          function(data) { console.log(data); },
+          function(error) { console.log(error) });
+          }
+
+    // ASCII only
+    function stringToBytes(string) {
+       var array = new Uint8Array(string.length);
+       for (var i = 0, l = string.length; i < l; i++) {
+           array[i] = string.charCodeAt(i);
+        }
+        return array.buffer;
+    }
+
+    // ASCII only
+    function bytesToString(buffer) {
+        return String.fromCharCode.apply(null, new Uint8Array(buffer));
+    }
 
 Writing to it:
